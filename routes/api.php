@@ -8,9 +8,9 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('players', PlayerController::class)
+Route::resource('player', PlayerController::class)
     ->only(['index', 'show', 'store', 'update']);
 
-Route::delete('players/{player}', [PlayerController::class, 'destroy'])
+Route::delete('player/{player}', [PlayerController::class, 'destroy'])
     ->middleware('auth:sanctum')
-    ->name('players.destroy');
+    ->name('player.destroy');
