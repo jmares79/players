@@ -12,7 +12,8 @@ class PlayerResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'skills' => $this->skills->map(function ($skill) {
+            'position' => $this->position,
+            'playerSkills' => $this->skills?->map(function ($skill) {
                 return [
                     'name' => $skill->name,
                     'value' => $skill->pivot->value,

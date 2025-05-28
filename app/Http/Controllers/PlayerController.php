@@ -11,10 +11,11 @@ use Symfony\Component\HttpFoundation\Response;
 class PlayerController extends Controller
 {
     public function __construct(protected readonly PlayerLogic $playerLogic) {}
+
     public function index()
     {
         return response()->json(
-            Player::all(),
+            Player::all()->toResourceCollection(),
             Response::HTTP_OK
         );
     }
@@ -24,7 +25,7 @@ class PlayerController extends Controller
         $player = $this->playerLogic->create($request->validated());
 
         return response()->json($player->toResource(), Response::HTTP_CREATED, [
-            'Location' => route('players.show', $player->id),
+            'Location' => route('player.show', $player->id),
         ]);
     }
 
@@ -33,17 +34,15 @@ class PlayerController extends Controller
         return response()->json([$player], Response::HTTP_OK);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdatePlayerRequest $request, Player $player)
     {
-        dd('Update Player: ' . $player->id);
+        $player = $this->playerLogic->update($player, $request->validated());
+
+        return response()->json($player->toResource(), Response::HTTP_OK, [
+            'Location' => route('player.show', $player->id),
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Player $player)
     {
         //
