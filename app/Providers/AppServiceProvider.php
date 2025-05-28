@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Team\Interfaces\TeamSelectorInterface;
+use App\Team\Strategy\StandardSelectorStrategy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            TeamSelectorInterface::class,
+            StandardSelectorStrategy::class
+        );
     }
 
     /**

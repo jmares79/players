@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Player\Models;
 
+use App\Skill\Models\Skill;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Player extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'name',
         'position',

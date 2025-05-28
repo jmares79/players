@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Logic;
+namespace App\Player\Logic;
 
-use App\Models\Player;
-use App\Models\Skill;
+use App\Player\Models\Player;
+use App\Skill\Models\Skill;
 
 class PlayerLogic
 {

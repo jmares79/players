@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Skill\Models\Skill;
 use Illuminate\Database\Seeder;
 
 class SkillSeeder extends Seeder
@@ -13,7 +13,7 @@ class SkillSeeder extends Seeder
     public function run(): void
     {
         foreach (['defense', 'attack', 'speed', 'stamina', 'strength'] as $skill) {
-            \App\Models\Skill::create([
+            Skill::create([
                 'name' => $skill,
             ]);
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Player\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -8,7 +8,6 @@ class UpdatePlayerRequest extends FormRequest
 {
     public function rules(): array
     {
-//        dd('UPDATE REQUEST', $this->all());
         return [
             'name' => 'bail|required|string|max:255',
             'position' => 'bail|required|string|max:255|in:defender,midfielder,forward',

@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Player\Controllers;
 
-use App\Http\Requests\StorePlayerRequest;
-use App\Http\Requests\UpdatePlayerRequest;
-use App\Logic\PlayerLogic;
-use App\Models\Player;
+use App\Http\Controllers\Controller;
+use App\Player\Logic\PlayerLogic;
+use App\Player\Models\Player;
+use App\Player\Requests\StorePlayerRequest;
+use App\Player\Requests\UpdatePlayerRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class PlayerController extends Controller

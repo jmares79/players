@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Skill\Models;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Skill>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Skill\Models\Skill>
  */
 class SkillFactory extends Factory
 {

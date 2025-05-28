@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Player;
 
-use App\Models\Player;
+use App\Player\Models\Player;
 use Database\Seeders\SkillSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -12,7 +12,7 @@ class PlayerUpdateTest extends TestCase
 {
     use RefreshDatabase;
 
-    /* @see \App\Http\Controllers\PlayerController::update() */
+    /* @see \App\Player\Controllers\PlayerController::update() */
     protected string $route = 'player.update';
 
     protected array $headers = [
