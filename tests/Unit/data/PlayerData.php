@@ -64,4 +64,44 @@ trait PlayerData
             ],
         ];
     }
+
+    /**
+     * Generates players and skill data to perform a fallback response on the midfielders and defenders request
+     *
+     * @return array
+     */
+    public function generateFallbackSkillsDataAndRequest(): array
+    {
+        Player::factory()
+            ->create([
+                'name' => 'Player 1 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach(Skill::whereName('speed')->first()->id, ['value' => 91]);
+
+        Player::factory()
+            ->create([
+                'name' => 'Player 2 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach(Skill::whereName('strength')->first()->id, ['value' => 22]);
+
+        Player::factory()
+            ->create([
+                'name' => 'Player 3 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach(Skill::whereName('stamina')->first()->id, ['value' => 93]);
+
+        return [
+            [
+                'position' => 'defender',
+                'mainSkill' => 'defense',
+                'numberOfPlayers' => 1
+            ],
+        ];
+    }
 }

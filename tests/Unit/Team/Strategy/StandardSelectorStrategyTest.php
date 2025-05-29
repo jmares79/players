@@ -60,4 +60,25 @@ class StandardSelectorStrategyTest extends TestCase
         $this->assertEquals($requirements[1]['position'], $response[1]['position']);
         $this->assertEquals($requirements[1]['position'], $response[2]['position']);
     }
+
+    #[Test]
+    public function it_can_select_players_with_fallback_skill()
+    {
+        $requirements = $this->generateFallbackSkillsDataAndRequest();
+
+        $selector = new StandardSelectorStrategy;
+        $response = $selector->select($requirements);
+
+        $this->assertIsArray($response);
+        $this->assertNotEmpty($response);
+
+        $this->assertArrayHasKey('name', $response[0]);
+        $this->assertArrayHasKey('position', $response[0]);
+        $this->assertArrayHasKey('skills', $response[0]);
+
+        $this->assertEquals($requirements[0]['position'], $response[0]['position']);
+        // Skill isn't the requested one, but a different one with max value
+        $this->assertNotEquals($requirements[0]['mainSkill'], $response[0]['skills'][0]['name']);
+        $this->assertEquals(93, $response[0]['skills'][0]['value']);
+    }
 }
