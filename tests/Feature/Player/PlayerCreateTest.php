@@ -3,6 +3,7 @@
 namespace Tests\Feature\Player;
 
 use App\Player\Models\Player;
+use App\Skill\Models\Skill;
 use Database\Seeders\SkillSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
