@@ -144,7 +144,7 @@ trait PlayerData
 
         Player::factory()
             ->create([
-                'name' => 'Player 2 defender',
+                'name' => 'Player 3 defender',
                 'position' => 'defender',
             ])
             ->skills()
@@ -165,6 +165,60 @@ trait PlayerData
 
     public function generateFallbackPositionsDataAndRequest()
     {
+        Player::factory()
+            ->create([
+                'name' => 'Player 1 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach([
+                Skill::whereName('stamina')->first()->id => ['value' => 91],
+                Skill::whereName('speed')->first()->id => ['value' => 100],
+                Skill::whereName('strength')->first()->id => ['value' => 21],
+            ]);
 
+        Player::factory()
+            ->create([
+                'name' => 'Player 2 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach([
+                Skill::whereName('stamina')->first()->id => ['value' => 82],
+                Skill::whereName('speed')->first()->id => ['value' => 72],
+                Skill::whereName('strength')->first()->id => ['value' => 62],
+            ]);
+
+        Player::factory()
+            ->create([
+                'name' => 'Player 3 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach([
+                Skill::whereName('stamina')->first()->id => ['value' => 93],
+                Skill::whereName('speed')->first()->id => ['value' => 83],
+                Skill::whereName('strength')->first()->id => ['value' => 73],
+            ]);
+
+        Player::factory()
+            ->create([
+                'name' => 'Player 4 midfielder',
+                'position' => 'midfielder',
+            ])
+            ->skills()
+            ->attach([
+                Skill::whereName('stamina')->first()->id => ['value' => 94],
+                Skill::whereName('speed')->first()->id => ['value' => 84],
+                Skill::whereName('strength')->first()->id => ['value' => 74],
+            ]);
+
+        return [
+            [
+                'position' => 'defender',
+                'mainSkill' => 'defense',
+                'numberOfPlayers' => 4
+            ],
+        ];
     }
 }

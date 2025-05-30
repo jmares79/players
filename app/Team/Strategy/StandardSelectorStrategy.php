@@ -3,39 +3,53 @@
 namespace App\Team\Strategy;
 
 use App\Player\Models\Player;
+use App\Team\Exceptions\InsufficientAmountOfPlayersException;
 use App\Team\Interfaces\TeamSelectorInterface;
 
 class StandardSelectorStrategy implements TeamSelectorInterface
 {
     protected array $selectedIds = [];
+
     /**
      * Implements the set of rules in order to select the best players based on the given requirements.
      *
      * @param array $requirements An array in the shape of: <position, mainSkill, numberOfPlayers>
      * @return array An array of players that match the requirements.
+     * @throws InsufficientAmountOfPlayersException
      */
     public function select(array $requirements): array
     {
         $players = collect();
 
         foreach ($requirements as $requirement) {
+            $requiredNumberOfPlayers = (int) $requirement['numberOfPlayers'];
+
+            // If the amount of players for a specific position is less than the required amount, return an error.
+            if (Player::where('position', $requirement['position'])->count() < $requiredNumberOfPlayers) {
+                throw new InsufficientAmountOfPlayersException("Insufficient amount of players for position: {$requirement['position']}");
+            }
+
             // Rule 1: Given a position & a skill, select the players that match both criteria when enough DB data.
             $players = $players->merge($this->fetchPlayers(
                 $requirement['position'],
                 $requirement['mainSkill'],
-                (int)$requirement['numberOfPlayers']
+                $requiredNumberOfPlayers
             ));
 
             if ($players->isEmpty()) {
                 // Rule 4: fallback to highest ANY skill for position
-                $players = $players->merge($this->fetchFallbackPlayers(
+                $players = $players->merge($this->fetchFallbackSkillsPlayers(
                     $requirement['position'],
                     $requirement['mainSkill'],
-                    (int)$requirement['numberOfPlayers'],
+                    $requiredNumberOfPlayers,
                 ));
             }
 
             $this->selectedIds[] = $players->pluck('player.id')->toArray();
+
+            if ($players->count() < $requiredNumberOfPlayers) {
+
+            }
         }
 
 //        dd($players->toArray());
@@ -64,7 +78,7 @@ class StandardSelectorStrategy implements TeamSelectorInterface
             ->values();
     }
 
-    protected function fetchFallbackPlayers(string $position, string $skill, int $numberOfPlayers)
+    protected function fetchFallbackSkillsPlayers(string $position, string $skill, int $numberOfPlayers)
     {
         return Player::where('position', $position)
             ->with('skills')
@@ -83,6 +97,7 @@ class StandardSelectorStrategy implements TeamSelectorInterface
             ->take($numberOfPlayers)
             ->values();
     }
+
     /**
      * Formats the result to match the expected output structure.
      *
@@ -91,15 +106,14 @@ class StandardSelectorStrategy implements TeamSelectorInterface
      */
     protected function formatResult(array $players): array
     {
-//        dd($players);
         return array_map(function ($player) {
             return [
                 'id' => $player['player']['id'],
                 'name' => $player['player']['name'],
                 'position' => $player['player']['position'],
-                'skills' => array_map(function ($skill) {
+                'playerSkills' => array_map(function ($skill) {
                     return [
-                        'name' => $skill['name'],
+                        'skill' => $skill['name'],
                         'value' => $skill['pivot']['value'],
                     ];
                 }, $player['player']['skills']),

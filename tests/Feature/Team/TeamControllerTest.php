@@ -7,10 +7,12 @@ use Database\Seeders\SkillSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
+use Tests\Unit\data\PlayerData;
 
 class TeamControllerTest extends TestCase
 {
     use RefreshDatabase;
+    use PlayerData;
 
     /* @see TeamController */
     protected string $route = 'team.process';
@@ -49,27 +51,16 @@ class TeamControllerTest extends TestCase
     #[Test]
     public function it_can_process_team()
     {
-        $payload = [
-            [
-                'position' => 'midfielder',
-                'mainSkill' => 'speed',
-                'numberOfPlayers' => 1
-            ],
-            [
-                'position' => 'defender',
-                'mainSkill' => 'strength',
-                'numberOfPlayers' => 2
-            ],
-        ];
+        $payload = $this->generateCompletePlayersDataAndRequest();
 
-//        $this->json('POST', route($this->route), $payload, $this->headers)->dump()
-//            ->assertStatus(200)
-//            ->assertExactJson([
-//                '*' => [
-//                    'position',
-//                    'mainSkill',
-//                    'players'
-//                ]
-//            ]);
+        $this->json('POST', route($this->route), $payload, $this->headers)->dump()
+            ->assertStatus(200)
+            ->assertExactJson([
+                '*' => [
+                    'position',
+                    'mainSkill',
+                    'players'
+                ]
+            ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Team\Strategy;
 
+use App\Team\Exceptions\InsufficientAmountOfPlayersException;
 use App\Team\Strategy\StandardSelectorStrategy;
 use Database\Seeders\SkillSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -100,11 +101,41 @@ class StandardSelectorStrategyTest extends TestCase
 
         $maxValue = max(array_column($response[0]['skills'], 'value'));
         $this->assertEquals(100, $maxValue);
+
+        // When trying with the same request for asking 2 players, it should return P1 with 100 speed and P3 with 93 stamina
+        $requirements[0]['numberOfPlayers'] = 2;
+
+        $selector = new StandardSelectorStrategy;
+        $response = $selector->select($requirements);
+
+        $this->assertIsArray($response);
+        $this->assertCount(2, $response);
+
+        // First player is P1
+        $this->assertEquals('Player 1 defender', $response[0]['name']);
+        $this->assertEquals($requirements[0]['position'], $response[0]['position']);
+        $this->assertArrayHasKey('skills', $response[0]);
+
+        $maxValue = max(array_column($response[0]['skills'], 'value'));
+        $this->assertEquals(100, $maxValue);
+
+        // First player is P3
+        $this->assertArrayHasKey('skills', $response[1]);
+        $this->assertEquals('Player 3 defender', $response[1]['name']);
+        $this->assertEquals($requirements[0]['position'], $response[1]['position']);
+
+        $maxValue = max(array_column($response[1]['skills'], 'value'));
+        $this->assertEquals(93, $maxValue);
     }
 
     #[Test]
-    public function it_can_fill_players_when_no_positions_available()
+    public function it_throws_exception_when_no_positions_available()
     {
         $requirements = $this->generateFallbackPositionsDataAndRequest();
+
+        $this->expectException(InsufficientAmountOfPlayersException::class);
+
+        $selector = new StandardSelectorStrategy;
+        $selector->select($requirements);
     }
 }
