@@ -2,8 +2,6 @@
 
 namespace Tests\Unit\Team\Strategy;
 
-use App\Player\Models\Player;
-use App\Skill\Models\Skill;
 use App\Team\Strategy\StandardSelectorStrategy;
 use Database\Seeders\SkillSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -77,8 +75,36 @@ class StandardSelectorStrategyTest extends TestCase
         $this->assertArrayHasKey('skills', $response[0]);
 
         $this->assertEquals($requirements[0]['position'], $response[0]['position']);
+
         // Skill isn't the requested one, but a different one with max value
         $this->assertNotEquals($requirements[0]['mainSkill'], $response[0]['skills'][0]['name']);
         $this->assertEquals(93, $response[0]['skills'][0]['value']);
+    }
+
+    #[Test]
+    public function it_can_select_players_with_fallback_multiple_skills()
+    {
+        $requirements = $this->generateFallbackMultipleSkillsDataAndRequest();
+
+        $selector = new StandardSelectorStrategy;
+        $response = $selector->select($requirements);
+
+        $this->assertIsArray($response);
+        $this->assertNotEmpty($response);
+        $this->assertArrayHasKey('skills', $response[0]);
+        $this->assertNotEmpty($response[0]['skills']);
+
+        $this->assertCount(1, $response);
+        $this->assertEquals('Player 1 defender', $response[0]['name']);
+        $this->assertEquals($requirements[0]['position'], $response[0]['position']);
+
+        $maxValue = max(array_column($response[0]['skills'], 'value'));
+        $this->assertEquals(100, $maxValue);
+    }
+
+    #[Test]
+    public function it_can_fill_players_when_no_positions_available()
+    {
+        $requirements = $this->generateFallbackPositionsDataAndRequest();
     }
 }

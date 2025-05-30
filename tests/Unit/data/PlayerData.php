@@ -16,39 +16,49 @@ trait PlayerData
      */
     public function generateCompletePlayersDataAndRequest(): array
     {
-        $player1 = Player::factory()->create([
+         Player::factory()->create([
             'name' => 'Player 1 midfielder',
             'position' => 'midfielder',
-        ]);
+        ])
+            ->skills()
+            ->attach([
+                Skill::whereName('defense')->first()->id => ['value' => 61],
+                Skill::whereName('speed')->first()->id => ['value' => 91],
+                Skill::whereName('stamina')->first()->id => ['value' => 81],
+            ]);
 
-        $player1->skills()->attach(Skill::whereName('defense')->first()->id, ['value' => 61]);
-        $player1->skills()->attach(Skill::whereName('speed')->first()->id, ['value' => 91]);
-        $player1->skills()->attach(Skill::whereName('stamina')->first()->id, ['value' => 81]);
-
-        $player2 = Player::factory()->create([
+        Player::factory()->create([
             'name' => 'Player 2 defender',
             'position' => 'defender',
-        ]);
-        $player2->skills()->attach(Skill::whereName('strength')->first()->id, ['value' => 82]);
-        $player2->skills()->attach(Skill::whereName('attack')->first()->id, ['value' => 32]);
-        $player2->skills()->attach(Skill::whereName('defense')->first()->id, ['value' => 82]);
+        ])
+            ->skills()
+            ->attach([
+                Skill::whereName('strength')->first()->id => ['value' => 82],
+                Skill::whereName('attack')->first()->id => ['value' => 32],
+                Skill::whereName('defense')->first()->id => ['value' => 82],
+            ]);
 
-        $player3 = Player::factory()->create([
+        Player::factory()->create([
             'name' => 'Player 3 defender',
             'position' => 'defender',
-        ]);
-        $player3->skills()->attach(Skill::whereName('strength')->first()->id, ['value' => 73]);
-        $player3->skills()->attach(Skill::whereName('attack')->first()->id, ['value' => 43]);
-        $player3->skills()->attach(Skill::whereName('defense')->first()->id, ['value' => 83]);
+        ])
+            ->skills()
+            ->attach([
+                Skill::whereName('strength')->first()->id => ['value' => 73],
+                Skill::whereName('attack')->first()->id => ['value' => 43],
+                Skill::whereName('defense')->first()->id => ['value' => 83],
+            ]);
 
-        $player4 = Player::factory()->create([
+        Player::factory()->create([
             'name' => 'Player 4 midfielder',
             'position' => 'midfielder',
-        ]);
-
-        $player4->skills()->attach(Skill::whereName('defense')->first()->id, ['value' => 64]);
-        $player4->skills()->attach(Skill::whereName('speed')->first()->id, ['value' => 94]);
-        $player4->skills()->attach(Skill::whereName('stamina')->first()->id, ['value' => 84]);
+        ])
+            ->skills()
+            ->attach([
+                Skill::whereName('defense')->first()->id => ['value' => 64],
+                Skill::whereName('speed')->first()->id => ['value' => 94],
+                Skill::whereName('stamina')->first()->id => ['value' => 84],
+            ]);
 
         // Compatible set of requirements to match the players created above
         return [
@@ -103,5 +113,58 @@ trait PlayerData
                 'numberOfPlayers' => 1
             ],
         ];
+    }
+
+    public function generateFallbackMultipleSkillsDataAndRequest(): array
+    {
+        // This player should be selected with the fallback rule, as it has the highest speed (100), but no defense skill.
+        Player::factory()
+            ->create([
+                'name' => 'Player 1 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach([
+                Skill::whereName('stamina')->first()->id => ['value' => 91],
+                Skill::whereName('speed')->first()->id => ['value' => 100],
+                Skill::whereName('strength')->first()->id => ['value' => 20],
+            ]);
+
+        Player::factory()
+            ->create([
+                'name' => 'Player 2 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach([
+                Skill::whereName('stamina')->first()->id => ['value' => 82],
+                Skill::whereName('speed')->first()->id => ['value' => 80],
+                Skill::whereName('strength')->first()->id => ['value' => 80],
+            ]);
+
+        Player::factory()
+            ->create([
+                'name' => 'Player 2 defender',
+                'position' => 'defender',
+            ])
+            ->skills()
+            ->attach([
+                Skill::whereName('stamina')->first()->id => ['value' => 93],
+                Skill::whereName('speed')->first()->id => ['value' => 90],
+                Skill::whereName('strength')->first()->id => ['value' => 50],
+            ]);
+
+        return [
+            [
+                'position' => 'defender',
+                'mainSkill' => 'defense',
+                'numberOfPlayers' => 1
+            ],
+        ];
+    }
+
+    public function generateFallbackPositionsDataAndRequest()
+    {
+
     }
 }
