@@ -45,7 +45,11 @@ class TeamControllerTest extends TestCase
         ];
         $this->json('POST', route($this->route), $payload, $this->headers)
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['conditions.0.position', 'conditions.0.mainSkill', 'conditions.0.numberOfPlayers']);
+            ->assertJsonValidationErrors([
+                'conditions.0.position',
+                'conditions.0.mainSkill',
+                'conditions.0.numberOfPlayers'
+            ]);
     }
 
     #[Test]
@@ -53,13 +57,13 @@ class TeamControllerTest extends TestCase
     {
         $payload = $this->generateCompletePlayersDataAndRequest();
 
-        $this->json('POST', route($this->route), $payload, $this->headers)->dump()
+        $this->json('POST', route($this->route), $payload, $this->headers)
             ->assertStatus(200)
-            ->assertExactJson([
+            ->assertJsonStructure([
                 '*' => [
-                    'position',
-                    'mainSkill',
-                    'players'
+                    'id',
+                    'name',
+                    'playerSkills'
                 ]
             ]);
     }

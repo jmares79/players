@@ -38,19 +38,19 @@ class StandardSelectorStrategyTest extends TestCase
 
         $this->assertArrayHasKey('name', $response[0]);
         $this->assertArrayHasKey('position', $response[0]);
-        $this->assertArrayHasKey('skills', $response[0]);
+        $this->assertArrayHasKey('playerSkills', $response[0]);
 
         // 1 midfielder & At least one of the player's skills should match the skill requirement
         $this->assertEquals($requirements[0]['position'], $response[0]['position']);
         $skillRequirement = $requirements[0]['mainSkill'];
 
         $skillNames = array_intersect([$skillRequirement], array_map(function ($skill) {
-            return $skill['name'];
-        }, $response[0]['skills']));
+            return $skill['skill'];
+        }, $response[0]['playerSkills']));
         $this->assertNotEmpty($skillNames);
 
-        $responseValue = array_values(array_filter($response[0]['skills'], function ($skill) use ($skillRequirement) {
-            return $skill['name'] === $skillRequirement;
+        $responseValue = array_values(array_filter($response[0]['playerSkills'], function ($skill) use ($skillRequirement) {
+            return $skill['skill'] === $skillRequirement;
         }));
 
         $this->assertEquals(94, $responseValue[0]['value']);
@@ -73,13 +73,13 @@ class StandardSelectorStrategyTest extends TestCase
 
         $this->assertArrayHasKey('name', $response[0]);
         $this->assertArrayHasKey('position', $response[0]);
-        $this->assertArrayHasKey('skills', $response[0]);
+        $this->assertArrayHasKey('playerSkills', $response[0]);
 
         $this->assertEquals($requirements[0]['position'], $response[0]['position']);
 
         // Skill isn't the requested one, but a different one with max value
-        $this->assertNotEquals($requirements[0]['mainSkill'], $response[0]['skills'][0]['name']);
-        $this->assertEquals(93, $response[0]['skills'][0]['value']);
+        $this->assertNotEquals($requirements[0]['mainSkill'], $response[0]['playerSkills'][0]['skill']);
+        $this->assertEquals(93, $response[0]['playerSkills'][0]['value']);
     }
 
     #[Test]
@@ -92,14 +92,14 @@ class StandardSelectorStrategyTest extends TestCase
 
         $this->assertIsArray($response);
         $this->assertNotEmpty($response);
-        $this->assertArrayHasKey('skills', $response[0]);
-        $this->assertNotEmpty($response[0]['skills']);
+        $this->assertArrayHasKey('playerSkills', $response[0]);
+        $this->assertNotEmpty($response[0]['playerSkills']);
 
         $this->assertCount(1, $response);
         $this->assertEquals('Player 1 defender', $response[0]['name']);
         $this->assertEquals($requirements[0]['position'], $response[0]['position']);
 
-        $maxValue = max(array_column($response[0]['skills'], 'value'));
+        $maxValue = max(array_column($response[0]['playerSkills'], 'value'));
         $this->assertEquals(100, $maxValue);
 
         // When trying with the same request for asking 2 players, it should return P1 with 100 speed and P3 with 93 stamina
@@ -114,17 +114,17 @@ class StandardSelectorStrategyTest extends TestCase
         // First player is P1
         $this->assertEquals('Player 1 defender', $response[0]['name']);
         $this->assertEquals($requirements[0]['position'], $response[0]['position']);
-        $this->assertArrayHasKey('skills', $response[0]);
+        $this->assertArrayHasKey('playerSkills', $response[0]);
 
-        $maxValue = max(array_column($response[0]['skills'], 'value'));
+        $maxValue = max(array_column($response[0]['playerSkills'], 'value'));
         $this->assertEquals(100, $maxValue);
 
         // First player is P3
-        $this->assertArrayHasKey('skills', $response[1]);
+        $this->assertArrayHasKey('playerSkills', $response[1]);
         $this->assertEquals('Player 3 defender', $response[1]['name']);
         $this->assertEquals($requirements[0]['position'], $response[1]['position']);
 
-        $maxValue = max(array_column($response[1]['skills'], 'value'));
+        $maxValue = max(array_column($response[1]['playerSkills'], 'value'));
         $this->assertEquals(93, $maxValue);
     }
 
